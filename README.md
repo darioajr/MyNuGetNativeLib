@@ -12,7 +12,7 @@ Visual Studio 2022 C++ Static Lib (Native) with NuGet packaging
 ## How to use this library
 1. **Register the new Package source on Nuget Package Manager Option**: In Visual Studio 2022 Options, register the new nuget.local as a local repository. 
 (Don't forget to select All in the package source on the Package Management screen for the solution when searching for local packages)
-2. **Create a new project to test the lib**: Exemple code.
+2. **Create a new project to test the lib**:
 ```cpp
 #include "MyLibFileSystem.h"
 
