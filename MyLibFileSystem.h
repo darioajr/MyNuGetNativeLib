@@ -2,7 +2,12 @@
 
 #include <iostream>
 
-namespace MyLibFileSystem
+namespace MyLibStorage
 {
-	void listFolderContent(std::string path);
+	class FileSystem 
+	{
+	public: 
+		static void listFolderContent(std::string path);
+	};
+	
 }

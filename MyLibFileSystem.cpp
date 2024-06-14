@@ -1,12 +1,11 @@
 #include "MyLibFileSystem.h"
 
 #include <boost/filesystem.hpp>
-
 namespace fs = boost::filesystem;
 
-namespace MyLib
+namespace MyLibStorage
 {
-	void listFolder(std::string path)
+	void FileSystem::listFolderContent(std::string path)
 	{
         fs::path dir_path(path);
 
