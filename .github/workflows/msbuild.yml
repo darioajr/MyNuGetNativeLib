@@ -52,6 +52,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: artifact-name
-        path: ${{env.GITHUB_WORKSPACE}}/MyNuGetNativeLib/x64/Release/*
+        path: ${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*
         if-no-files-found: 'warn'
         working-directory: ${{env.GITHUB_WORKSPACE}}
