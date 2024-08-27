@@ -59,18 +59,7 @@ jobs:
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       with:
-        tag_name: v${{github.run_number}}
-        release_name: Release v${{github.run_number}}
-        draft: false
-        prerelease: false
+        artifacts: ${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*.lib
 
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{steps.create_release.outputs.upload_url}}
-        asset_path: ${{env.GITHUB_WORKSPACE}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*
-        asset_name: MyNuGetNativeLib.zip
-        asset_content_type: application/zip
+  
