@@ -51,7 +51,7 @@ jobs:
     - name: Publish Build Artifact
       uses: actions/upload-artifact@v3
       with:
-        upload_url: ${{ step.create_release.outputs.upload_url }}
-        asset_path: ${{env.GITHUB_WORKSPACE}}/MyNuGetNativeLib/x64/Release/*
-        asset_name: MyNugetNativeLib.zip
-        asset_content_type: application/zip
+        name: artifact-name
+        path: ${{env.GITHUB_WORKSPACE}}/MyNuGetNativeLib/x64/Release/*
+        if-no-files-found: 'warn'
+        working-directory: ${{env.GITHUB_WORKSPACE}}
