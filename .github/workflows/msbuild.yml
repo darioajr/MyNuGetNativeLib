@@ -47,3 +47,11 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild ${{env.SOLUTION_FILE_PATH}} /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} /p:UsePrecompiledHeaders=false /p:PlatformToolset=${{env.BUILD_PLATFORM_TOOLSET}} /p:WindowsTargetPlatformVersion=${{env.BUILD_WINDOWS_PLATFORM_VERSION}} /t:Build
+
+    - name: Publish Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        upload_url: ${{ step.create_release.outputs.upload_url }}
+        asset_path: ${{env.GITHUB_WORKSPACE}}/MyNuGetNativeLib/x64/Release/*
+        asset_name: MyNugetNativeLib.zip
+        asset_content_type: application/zip
