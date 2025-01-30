@@ -1,13 +1,12 @@
 # MyNuGetNativeLib
 Visual Studio 2022 C++ Static Lib (Native) with NuGet packaging
 
+[![Nuget Version](https://img.shields.io/nuget/v/MyNuGetNativeLib)](https://www.nuget.org/packages/MyNuGetNativeLib)
+
 
 ## How to build NuGet package
 1. **Dependencies**: Install Windows x86 Commandline nuget.exe from [NuGet website](https://www.nuget.org/downloads) and put it in the path.
-2. **Execute the build**: Call Powershell script to build NuGet package locally (default: c:\nuget.local).
-```bash
-.\build.ps1
-```
+2. **Execute the build**: View msbuild.yml
 
 ## How to use this library
 1. **Register the new Package source on Nuget Package Manager Option**: In Visual Studio 2022 Options, register the new nuget.local as a local repository. 
