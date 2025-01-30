@@ -70,18 +70,18 @@ jobs:
       run: nuget push out\*.nupkg -ApiKey ${{ secrets.NUGET_API_KEY }} -Source https://api.nuget.org/v3/index.json
 
     - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Release ${{ env.PACKAGE_VERSION }}
-          tag_name: ${{ env.PACKAGE_VERSION }}
-          files: |
-            out\*.nupkg
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-          make_latest: true
-          fail_on_unmatched_files: false
-          token: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
+      with:
+        name: Release ${{ env.PACKAGE_VERSION }}
+        tag_name: ${{ env.PACKAGE_VERSION }}
+        files: |
+          out\*.nupkg
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+        make_latest: true
+        fail_on_unmatched_files: false
+        token: ${{ secrets.GITHUB_TOKEN }}
 
 
   
