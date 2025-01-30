@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MyNuGetNativeLib</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <authors>Dario Alves Junior</authors>
     <owners>Dario Alves Junior</owners>
     <icon>icon.png</icon>
