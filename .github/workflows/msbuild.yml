@@ -18,14 +18,15 @@ env:
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-  BUILD_CONFIGURATION: Release
+  BUILD_CONFIGURATION_RELEASE: Release
+  BUILD_CONFIGURATION_DEBUG: Debug
   BUILD_PLATFORM: x64
   BUILD_PLATFORM_TOOLSET: v143
   BUILD_WINDOWS_PLATFORM_VERSION: 10.0
-  
+  NUGET_PACKAGE_NAME: MyNuGetNativeLib
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -36,30 +37,51 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
-    - name: Build
+    - name: Build Release
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      # Add additional options to the MSBuild command line here (like platform or verbosity level).
-      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild ${{env.SOLUTION_FILE_PATH}} /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} /p:UsePrecompiledHeaders=false /p:PlatformToolset=${{env.BUILD_PLATFORM_TOOLSET}} /p:WindowsTargetPlatformVersion=${{env.BUILD_WINDOWS_PLATFORM_VERSION}} /t:Build
+      run: msbuild ${{env.SOLUTION_FILE_PATH}} /m /p:Configuration=${{env.BUILD_CONFIGURATION_RELEASE}} /p:Platform=${{env.BUILD_PLATFORM}} /p:UsePrecompiledHeaders=false /p:PlatformToolset=${{env.BUILD_PLATFORM_TOOLSET}} /p:WindowsTargetPlatformVersion=${{env.BUILD_WINDOWS_PLATFORM_VERSION}} /t:Build
 
-    - name: Publish Build Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: artifact-name
-        path: ${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*
-        if-no-files-found: 'warn'
-        working-directory: ${{env.GITHUB_WORKSPACE}}
+    - name: Build Debug
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild ${{env.SOLUTION_FILE_PATH}} /m /p:Configuration=${{env.BUILD_CONFIGURATION_DEBUG}} /p:Platform=${{env.BUILD_PLATFORM}} /p:UsePrecompiledHeaders=false /p:PlatformToolset=${{env.BUILD_PLATFORM_TOOLSET}} /p:WindowsTargetPlatformVersion=${{env.BUILD_WINDOWS_PLATFORM_VERSION}} /t:Build
 
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      with:
-        artifacts: ${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*.lib
+    - name: Incrementar versão no .nuspec
+      run: |
+        $xml = [xml](Get-Content ${{env.NUGET_PACKAGE_NAME}}.nuspec)
+        $version = $xml.package.metadata.version
+        $parts = $version -split '\.'
+        $parts[-1] = [int]$parts[-1] + 1  # Incrementa o último número (patch)
+        $newVersion = $parts -join '.'
+        $xml.package.metadata.version = $newVersion
+        $xml.Save("${{env.NUGET_PACKAGE_NAME}}.nuspec")
+        echo "PACKAGE_VERSION=$newVersion" >> $env:GITHUB_ENV
+      shell: pwsh
+
+    - name: Criar pacote NuGet
+      run: nuget pack ${{env.NUGET_PACKAGE_NAME}}.nuspec -OutputDirectory out
+
+    - name: Publicar no NuGet.org
+      run: nuget push out\*.nupkg -ApiKey ${{ secrets.NUGET_API_KEY }} -Source https://api.nuget.org/v3/index.json
+
+    - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ env.PACKAGE_VERSION }}
+          tag_name: ${{ env.PACKAGE_VERSION }}
+          files: |
+            out\*.nupkg
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          make_latest: true
+          fail_on_unmatched_files: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
 
   
