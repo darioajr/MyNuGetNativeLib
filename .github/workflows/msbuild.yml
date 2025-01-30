@@ -69,7 +69,12 @@ jobs:
         $xml.package.metadata.version = $newVersion
         $xml.Save("${{env.NUGET_PACKAGE_NAME}}.nuspec")
         echo "PACKAGE_VERSION=$newVersion" >> $env:GITHUB_ENV
+        git config --global user.email "darioajr@gmail.com"
+        git config --global user.name "Dario Alves Junior"
+        git push origin
       shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Criar pacote NuGet
       run: nuget pack ${{env.NUGET_PACKAGE_NAME}}.nuspec -OutputDirectory out
