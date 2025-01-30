@@ -71,7 +71,9 @@ jobs:
         echo "PACKAGE_VERSION=$newVersion" >> $env:GITHUB_ENV
         git config --global user.email "darioajr@gmail.com"
         git config --global user.name "Dario Alves Junior"
-        git push origin
+        git add ${{env.NUGET_PACKAGE_NAME}}.nuspec
+        git commit -m "Increment version to $newVersion [skip ci]"
+        git push origin HEAD:main
       shell: pwsh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
